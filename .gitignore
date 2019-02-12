@@ -2,7 +2,7 @@
 ### Angular ###
 ## Angular ##
 # compiled output
-/dist/*
+dist/*
 /server/dist/*
 #/client/dist/*
 
