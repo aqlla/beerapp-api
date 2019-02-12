@@ -3,7 +3,7 @@ import * as express from "express";
 import * as path from "path";
 import { Client } from "pg";
 import * as proc from "process";
-import ISqlColumn from "../models/ISqlColumn";
+import ISqlColumn from "./models/ISqlColumn";
 
 env.config();
 

@@ -1,4 +1,4 @@
-import IData from "../models/IData";
+import IData from "./IData";
 
 export default interface IBeerData extends IData<number> {
     name: string;
