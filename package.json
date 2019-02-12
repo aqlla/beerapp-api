@@ -4,7 +4,7 @@
   "description": "Promotes Craft Beer with social drinking and marketing for Microbreweries.",
   "main": "./dist/index.js",
   "scripts": {
-    "--postinstall": "npm run start",
+    "postinstall": "npm run start",
     "prebuild": "tslint -c ./tslint.json -p ./tsconfig.json --fix",
     "build": "tsc -p ./tsconfig.json",
     "prestart": "npm run build",

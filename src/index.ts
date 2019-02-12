@@ -5,14 +5,19 @@ import { Client } from "pg";
 import * as proc from "process";
 import ISqlColumn from "./models/ISqlColumn";
 
+import {cors} from "./CORSMiddleware";
+
 env.config();
 
 const pg = new Client({
     host: proc.env.DB_HOST,
     database: proc.env.DB_NAME,
-    user: proc.env.DB_USER
+    user: proc.env.DB_USER,
+    password: proc.env.DB_PASS
 });
 const app = express();
+app.use(cors(["http://localhost:63342"]));
+
 const port = 8080;
 const fs: ISqlColumn[] = [
     {
@@ -75,10 +80,10 @@ app.get("/api/s/:val", async (req, res) => {
         const select = fs.map((f) => `${f.table}.${f.name} ${f.alias ? `AS ${f.alias} ` : ``}`);
         const query = `SELECT ${select} FROM beers LEFT JOIN breweries ON breweries.id = beers.brewery_id WHERE `
             + (Number(searchStr)
-                ? fs.filter((f) => f.type = "number")
-                    .reduce((acc, f) => (acc ? `${acc} or ` : ``) + `${f.table}.${f.name} ilike '%${searchStr}%'`, "")
-                : fs.filter((f) => f.type = "string")
-                    .reduce((acc, f) => (acc ? `${acc} or ` : ``) + `${f.table}.${f.name} = ${searchStr}`, ""))
+                ? fs.filter((f) => f.type === "number")
+                    .reduce((acc, f) => (acc ? `${acc} or ` : ``) + `${f.table}.${f.name} = ${searchStr}`, "")
+                : fs.filter((f) => f.type === "string")
+                    .reduce((acc, f) => (acc ? `${acc} or ` : ``) + `${f.table}.${f.name} ILIKE '%${searchStr}%'`, ""))
             + ` ORDER BY beers.name ASC `
             + ` LIMIT ${maxResults}`;
         console.log(query);
@@ -121,7 +126,9 @@ app.get("/api/beer/:field/:val", async (req, res) => {
 
 app.listen(port, async (_) => {
     try {
+        // console.log(pg);
         await pg.connect();
+        // await pg.query(`SET search_path TO schema,public;`);
         console.log(`server started at http://localhost:${port}`);
     } catch (e) {
         console.error(e);
